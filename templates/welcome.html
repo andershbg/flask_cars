@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Cars{% endblock %}
+
+{% block content %}
+    <h1>Welcome to Cars</h1>
+    <h2>Cars</h2>
+    <ul>
+        {% for car in cars %}
+            <li>
+                <a href="{{ url_for('car_view', index=loop.index0) }}">
+                    {{ car.brand }} {{ car.model }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('add_car') }}">Add a new car</a>
+{% endblock %}

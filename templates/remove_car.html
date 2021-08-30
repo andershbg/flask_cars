@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Car{% endblock %}
+
+{% block content %}
+    <h1>Remove Car</h1>
+    Brand: {{ car.brand }} <br>
+    Model: {{ car.model }}
+
+    <h2>Are you sure?</h2>
+    <form method="post">
+        <button type="submit">Yes</button>&nbsp;
+        <a href="{{ url_for('welcome') }}">No</a>
+    </form>
+{% endblock %}
