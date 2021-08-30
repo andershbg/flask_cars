@@ -22,4 +22,10 @@ def save_db():
         return json.dump(db, f)
 
 
+def load_db_pers():
+    with open("pers_db.json", encoding='utf-8') as f:
+        return json.load(f)
+
+
 db = load_db()
+db_pers = load_db_pers()

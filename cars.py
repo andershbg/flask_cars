@@ -3,7 +3,7 @@ from flask import (Flask, render_template, abort, jsonify, request,
 
 import logging
 
-from model import db, save_db
+from model import db, save_db, db_pers
 
 app = Flask(__name__)
 
@@ -61,3 +61,14 @@ def remove_car(index):
 @app.route("/api/car/")
 def api_car_list():
     return jsonify(db)
+
+@app.route("/add_person", methods=["GET", "POST"])
+def add_person():
+    if request.method == "POST":
+        name = str(escape(request.form['name']))
+        person = {"name": name}
+        db_pers.append(person)
+        save_person_db()
+        return redirect(url_for('person_view', index=len(db_pers) - 1))
+    else:
+        return render_template("add_person.html")

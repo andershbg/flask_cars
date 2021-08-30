@@ -10,7 +10,7 @@
         <button>
             {% if index < max_index %}
                 <a href="{{ url_for('car_view', index=index+1) }}">
-                    Next card
+                    Next car
                 </a>
             {% else %}
                 <a href="{{ url_for('car_view', index=0) }}">
