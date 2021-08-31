@@ -70,5 +70,9 @@ def get_db_person(name):
         return ownerlist
 
 
+def list_sort_cars(e):
+    return e["brand"].upper()
+
+
 db = load_db()
 db_pers = load_db_pers()

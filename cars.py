@@ -3,7 +3,7 @@ from flask import (Flask, render_template, abort, jsonify, request,
 
 import logging
 
-from model import db, save_db, db_pers, save_db_pers, get_db_car, get_db_pers, get_db_person
+from model import db, save_db, db_pers, save_db_pers, get_db_car, get_db_pers, get_db_person, list_sort_cars
 
 app = Flask(__name__)
 
@@ -12,6 +12,7 @@ logging.basicConfig(level=logging.DEBUG,format='%(process)d-%(levelname)s-%(mess
 @app.route("/")
 def welcome():
     logging.debug('logging is active')
+    db.sort(key=list_sort_cars)
     return render_template(
         "welcome.html",
         cars=db
@@ -82,6 +83,9 @@ def get_car():
 def remove_car(index):
     try:
         if request.method == "POST":
+            owner = get_db_pers(db[index]['regnr'])
+            del db_pers[owner]
+            save_db_pers()
             del db[index]
             save_db()
             if index > 0:
