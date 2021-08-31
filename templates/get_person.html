@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Cars{% endblock %}
+
+{% block content %}
+    <h1>Search person</h1>
+    <form method="post">
+        <p>
+            Name:
+            <input type="text" name="name">
+        </p>
+        <p>{{ owner }}</p>
+        <ul>
+        {% for car in cars %}
+            <li>
+                 Brand: {{ car.brand }} <br>
+                Model: {{ car.model }} <br>
+                Number: {{ car.regnr }} <br>
+                <br>
+            </li>
+        {% endfor %}
+        </ul>
+
+        <button type="submit">Search</button>
+    </form>
+    <br>
+    <a href="{{ url_for('welcome') }}">
+        Home
+    </a>
+
+{% endblock %}

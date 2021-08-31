@@ -60,5 +60,15 @@ def get_db_pers(regnr):
         return -1
 
 
+def get_db_person(name):
+    with open("pers_db.json", encoding='utf-8') as f:
+        persons = json.load(f)
+        ownerlist = []
+        for person in persons:
+            if person['name'] == name:
+                ownerlist.append(person['regnr'])
+        return ownerlist
+
+
 db = load_db()
 db_pers = load_db_pers()

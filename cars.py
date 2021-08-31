@@ -3,7 +3,7 @@ from flask import (Flask, render_template, abort, jsonify, request,
 
 import logging
 
-from model import db, save_db, db_pers, save_db_pers, get_db_car, get_db_pers
+from model import db, save_db, db_pers, save_db_pers, get_db_car, get_db_pers, get_db_person
 
 app = Flask(__name__)
 
@@ -22,9 +22,10 @@ def welcome():
 def car_view(index):
     try:
         car = db[index]
+        owner = get_db_pers(car['regnr'])
         return render_template("car.html",
                                car=car,
-                               owner=0,
+                               owner=db_pers[owner]['name'],
                                index=index,
                                max_index=len(db)-1)
     except IndexError:
@@ -34,10 +35,17 @@ def car_view(index):
 @app.route("/add_car", methods=["GET", "POST"])
 def add_car():
     if request.method == "POST":
+        name = str(escape(request.form['name'])).upper()
         brand = str(escape(request.form['brand']))
         model = str(escape(request.form['model']))
         regnr = str(escape(request.form['regnr'])).upper()
-        if len(brand) and len(model) and len(regnr):
+        if len(name) and len(brand) and len(model) and len(regnr):
+            regnr = str(escape(request.form['regnr'])).upper()
+            person = {"name": name,
+                      "regnr": regnr}
+            db_pers.append(person)
+            save_db_pers()
+
             car = {"brand": brand,
                   "model": model,
                   "regnr": regnr}
@@ -62,7 +70,7 @@ def get_car():
                 car = db[index]
                 return render_template("car.html",
                                        car=car,
-                                       owner=db_pers[owner],
+                                       owner=db_pers[owner]['name'],
                                        index=index,
                                        max_index=len(db) - 1)
         return render_template("get_car.html")
@@ -86,15 +94,10 @@ def remove_car(index):
         abort(404)
 
 
-@app.route("/api/car/")
-def api_car_list():
-    return jsonify(db)
-
-
 @app.route("/add_person", methods=["GET", "POST"])
 def add_person():
     if request.method == "POST":
-        name = str(escape(request.form['name']))
+        name = str(escape(request.form['name'])).upper()
         regnr = str(escape(request.form['regnr'])).upper()
         person = {"name": name,
                  "regnr": regnr}
@@ -115,3 +118,36 @@ def person_view(index):
                                max_index=len(db_pers)-1)
     except IndexError:
         abort(404)
+
+
+@app.route("/get_person", methods=["GET", "POST"])
+def get_person():
+    if request.method == "POST":
+        name = str(escape(request.form['name'])).upper()
+        if len(name):
+            ownerlist = get_db_person(name)
+            logging.debug(ownerlist)
+            cars = []
+            for regnr in ownerlist:
+                logging.debug(regnr)
+                index = get_db_car(regnr)
+                cars.append(db[index])
+                logging.debug(cars)
+
+            return render_template("get_person.html",
+                                   cars=cars,
+                                   owner=name)
+
+        return render_template("get_person.html")
+    else:
+        return render_template("get_person.html")
+
+@app.route("/api/car/")
+def api_car_list():
+    return jsonify(db)
+
+
+@app.route("/api/owner/")
+def api_owner_list():
+    return jsonify(db_pers)
+

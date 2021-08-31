@@ -4,24 +4,23 @@
 
 {% block content %}
     <h1>Welcome to Cars</h1>
+    <p>
+        <a href="{{ url_for('get_car') }}">Search car</a>
+    </p>
+    <p>
+        <a href="{{ url_for('get_person') }}">Search person</a>
+    </p>
+    <p>
+        <a href="{{ url_for('add_car') }}">Add a new car</a>
+    </p>
     <h2>Cars</h2>
     <ul>
         {% for car in cars %}
             <li>
                 <a href="{{ url_for('car_view', index=loop.index0) }}">
-                    {{ car.brand }} {{ car.model }}
+                    {{ car.brand }} {{ car.model }}, {{car.regnr }}
                 </a>
             </li>
         {% endfor %}
     </ul>
-
-    <p>
-        <a href="{{ url_for('get_car') }}">Search car</a>
-    </p>
-    <p>
-        <a href="{{ url_for('add_car') }}">Add a new car</a>
-    </p>
-    <p>
-        <a href="{{ url_for('add_person') }}">Registrate a car</a>
-    </p>
 {% endblock %}
