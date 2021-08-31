@@ -3,21 +3,13 @@
 {% block title %}Cars{% endblock %}
 
 {% block content %}
-    <h1>Add a new car</h1>
+    <h1>Search car</h1>
     <form method="post">
-        <p>
-            Brand:
-            <input type="text" name="brand">
-        </p>
-        <p>
-            Model:
-            <input type="text" name="model">
-        </p>
         <p>
             Number:
             <input type="text" name="regnr">
         </p>
-        <button type="submit">Create</button>
+        <button type="submit">Search</button>
     </form>
     <br>
     <a href="{{ url_for('welcome') }}">

@@ -11,6 +11,10 @@ https://flask-sqlalchemy.palletsprojects.com/.
 
 import json
 
+import logging
+
+logging.basicConfig(level=logging.DEBUG,format='%(process)d-%(levelname)s-%(message)s')
+
 
 def load_db():
     with open("cars_db.json", encoding='utf-8') as f:
@@ -22,9 +26,38 @@ def save_db():
         return json.dump(db, f)
 
 
+def get_db_car(regnr):
+    with open("cars_db.json", encoding='utf-8') as f:
+        cars = json.load(f)
+#        logging.debug(regnr)
+#        logging.debug(cars)
+        index = 0
+        for car in cars:
+            if car['regnr'] == regnr:
+                return index
+            index = index + 1
+        return -1
+
 def load_db_pers():
     with open("pers_db.json", encoding='utf-8') as f:
         return json.load(f)
+
+
+def save_db_pers():
+    with open("pers_db.json", 'w') as f:
+        return json.dump(db_pers, f)
+
+
+def get_db_pers(regnr):
+    with open("pers_db.json", encoding='utf-8') as f:
+        persons = json.load(f)
+#        logging.debug(regnr)
+        index = 0
+        for person in persons:
+            if person['regnr'] == regnr:
+                return index
+            index = index + 1
+        return -1
 
 
 db = load_db()
