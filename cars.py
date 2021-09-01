@@ -3,7 +3,7 @@ from flask import (Flask, render_template, abort, jsonify, request,
 
 import logging
 
-from model import db, save_db, db_pers, save_db_pers, get_db_car, get_db_person, get_db_pers_id, list_sort_cars
+from model import db, save_db, db_pers, save_db_pers, get_db_car, get_db_pers_id, list_sort_cars
 
 app = Flask(__name__)
 
@@ -40,7 +40,8 @@ def add_car():
         brand = str(escape(request.form['brand']))
         model = str(escape(request.form['model']))
         regnr = str(escape(request.form['regnr'])).upper()
-        if len(name) and len(brand) and len(model) and len(regnr):
+        exist = get_db_car(db, regnr)
+        if exist < 0 and len(name) and len(brand) and len(model) and len(regnr):
             owner = get_db_pers_id(name)
             if owner < 0:
                 person = {"name": name}
@@ -54,7 +55,9 @@ def add_car():
                   "owner": owner}
             db.append(car)
             save_db()
-            return redirect(url_for('car_view', index=len(db) - 1))
+            db.sort(key=list_sort_cars)
+            index = get_db_car(db, regnr)
+            return redirect(url_for('car_view', index=index))
         else:
             return render_template("add_car.html")
     else:
@@ -147,6 +150,7 @@ def get_person():
 
 @app.route("/api/car/")
 def api_car_list():
+    db.sort(key=list_sort_cars)
     return jsonify(db)
 
 

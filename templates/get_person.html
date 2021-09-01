@@ -9,6 +9,9 @@
             Name:
             <input type="text" name="name">
         </p>
+        <button type="submit">Search</button>
+        <br>
+
         <p>{{ owner }}</p>
         <ul>
         {% for car in cars %}
@@ -20,10 +23,8 @@
             </li>
         {% endfor %}
         </ul>
-
-        <button type="submit">Search</button>
     </form>
-    <br>
+
     <a href="{{ url_for('welcome') }}">
         Home
     </a>

@@ -68,16 +68,6 @@ def get_db_pers_id(name):
         return -1
 
 
-def get_db_person(name):
-    with open("pers_db.json", encoding='utf-8') as f:
-        persons = json.load(f)
-        ownerlist = []
-        for person in persons:
-            if person['name'] == name:
-                ownerlist.append(person['regnr'])
-        return ownerlist
-
-
 def list_sort_cars(e):
     return e["brand"].upper()
 
