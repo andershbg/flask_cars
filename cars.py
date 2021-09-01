@@ -158,3 +158,10 @@ def api_car_list():
 def api_owner_list():
     return jsonify(db_pers)
 
+@app.route("/api/owner/<int:index>")
+def api_owner_id_list(index):
+    cars = []
+    for x in range(len(db)):
+        if db[x]['owner'] == index:
+            cars.append(db[x])
+    return jsonify(cars)
