@@ -3,7 +3,7 @@ from flask import (Flask, render_template, abort, jsonify, request,
 
 import logging
 
-from model import db, save_db, db_pers, save_db_pers, get_db_car, get_db_pers, get_db_person, list_sort_cars
+from model import db, save_db, db_pers, save_db_pers, get_db_car, get_db_person, get_db_pers_id, list_sort_cars
 
 app = Flask(__name__)
 
@@ -23,7 +23,7 @@ def welcome():
 def car_view(index):
     try:
         car = db[index]
-        owner = get_db_pers(car['regnr'])
+        owner = car['owner']
         return render_template("car.html",
                                car=car,
                                owner=db_pers[owner]['name'],
@@ -41,15 +41,17 @@ def add_car():
         model = str(escape(request.form['model']))
         regnr = str(escape(request.form['regnr'])).upper()
         if len(name) and len(brand) and len(model) and len(regnr):
-            regnr = str(escape(request.form['regnr'])).upper()
-            person = {"name": name,
-                      "regnr": regnr}
-            db_pers.append(person)
-            save_db_pers()
+            owner = get_db_pers_id(name)
+            if owner < 0:
+                person = {"name": name}
+                db_pers.append(person)
+                save_db_pers()
+                owner = len(db_pers) - 1
 
             car = {"brand": brand,
                   "model": model,
-                  "regnr": regnr}
+                  "regnr": regnr,
+                  "owner": owner}
             db.append(car)
             save_db()
             return redirect(url_for('car_view', index=len(db) - 1))
@@ -62,12 +64,14 @@ def add_car():
 def get_car():
     if request.method == "POST":
         regnr = str(escape(request.form['regnr'])).upper()
-#        logging.debug(regnr)
+        logging.debug(regnr)
         if len(regnr):
-            index = get_db_car(regnr)
+            index = get_db_car(db, regnr)
+            logging.debug(index)
             if index > -1:
-                owner = get_db_pers(regnr)
-                logging.debug(db_pers[owner]['name'])
+                logging.debug(db[index])
+                owner = db[index]['owner']
+                logging.debug(owner)
                 car = db[index]
                 return render_template("car.html",
                                        car=car,
@@ -83,9 +87,6 @@ def get_car():
 def remove_car(index):
     try:
         if request.method == "POST":
-            owner = get_db_pers(db[index]['regnr'])
-            del db_pers[owner]
-            save_db_pers()
             del db[index]
             save_db()
             if index > 0:
@@ -129,14 +130,12 @@ def get_person():
     if request.method == "POST":
         name = str(escape(request.form['name'])).upper()
         if len(name):
-            ownerlist = get_db_person(name)
-            logging.debug(ownerlist)
+            owner = get_db_pers_id(name)
             cars = []
-            for regnr in ownerlist:
-                logging.debug(regnr)
-                index = get_db_car(regnr)
-                cars.append(db[index])
-                logging.debug(cars)
+            for index in range(len(db)):
+                if db[index]['owner'] == owner:
+                    cars.append(db[index])
+                    logging.debug(db[index]['model'])
 
             return render_template("get_person.html",
                                    cars=cars,

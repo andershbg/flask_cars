@@ -26,17 +26,25 @@ def save_db():
         return json.dump(db, f)
 
 
-def get_db_car(regnr):
-    with open("cars_db.json", encoding='utf-8') as f:
+def get_db_car(db, regnr):
+    #sorted db, not read from disk
+    index = 0
+    for car in range(len(db)):
+        if db[car]['regnr'] == regnr:
+            return index
+        index = index + 1
+    return -1
+
+
+def get_db_cars(owner):
+    with open("db.json", encoding='utf-8') as f:
         cars = json.load(f)
-#        logging.debug(regnr)
-#        logging.debug(cars)
-        index = 0
+        ownerlist = []
         for car in cars:
-            if car['regnr'] == regnr:
-                return index
-            index = index + 1
-        return -1
+            if car['owner'] == owner:
+                ownerlist.append(db_pers['name'])
+        return ownerlist
+
 
 def load_db_pers():
     with open("pers_db.json", encoding='utf-8') as f:
@@ -48,13 +56,13 @@ def save_db_pers():
         return json.dump(db_pers, f)
 
 
-def get_db_pers(regnr):
+def get_db_pers_id(name):
     with open("pers_db.json", encoding='utf-8') as f:
         persons = json.load(f)
 #        logging.debug(regnr)
         index = 0
         for person in persons:
-            if person['regnr'] == regnr:
+            if person['name'] == name:
                 return index
             index = index + 1
         return -1
