@@ -102,20 +102,6 @@ def remove_car(index):
         abort(404)
 
 
-@app.route("/add_person", methods=["GET", "POST"])
-def add_person():
-    if request.method == "POST":
-        name = str(escape(request.form['name'])).upper()
-        regnr = str(escape(request.form['regnr'])).upper()
-        person = {"name": name,
-                 "regnr": regnr}
-        db_pers.append(person)
-        save_db_pers()
-        return redirect(url_for('person_view', index=len(db_pers) - 1))
-    else:
-        return render_template("add_person.html")
-
-
 @app.route("/person/<int:index>")
 def person_view(index):
     try:
